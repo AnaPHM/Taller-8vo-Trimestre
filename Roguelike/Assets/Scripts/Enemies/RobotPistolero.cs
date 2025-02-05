@@ -22,8 +22,8 @@ public class RobotPistolero : MonoBehaviour, IDamageable
 
     public static event System.Action OnEnemyDeath;
 
-    //Referencias para la animacion y el sprite
-    //public Animator animator;
+    // Referencias para la animación y el sprite
+    // public Animator animator;
     public SpriteRenderer spriteR;
 
     public Door door;
@@ -34,6 +34,7 @@ public class RobotPistolero : MonoBehaviour, IDamageable
         currentHP = maxHP;
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
+
     private void Update()
     {
         Move();
@@ -47,12 +48,10 @@ public class RobotPistolero : MonoBehaviour, IDamageable
             if (horizontal)
             {
                 transform.Translate(Vector2.right * direction * speed * Time.deltaTime);
-                transform.eulerAngles = new Vector3(0, 0, movingRight ? -90 : 90);
             }
             else
             {
                 transform.Translate(Vector2.right * direction * speed * Time.deltaTime);
-                transform.eulerAngles = new Vector3(0, 0, movingRight ? 0 : 180);
             }
         }
     }
@@ -63,13 +62,13 @@ public class RobotPistolero : MonoBehaviour, IDamageable
         {
             movingRight = !movingRight;
             transform.position += new Vector3(0, direction * 0.1f, 0); // Que no se atore en la pared.
+            Flip(); // Voltear el sprite al chocar con una pared
         }
     }
 
     private void CheckForPlayer()
     {
         RaycastHit2D hit = Physics2D.Raycast(shootPoint.position, transform.right, 10f);
-
 
         if (hit.collider != null && hit.collider.CompareTag("Player"))
         {
@@ -80,8 +79,9 @@ public class RobotPistolero : MonoBehaviour, IDamageable
             }
         }
         else
-            shootmode= false;
-        
+        {
+            shootmode = false;
+        }
     }
 
     void OnDrawGizmos()
@@ -89,24 +89,23 @@ public class RobotPistolero : MonoBehaviour, IDamageable
         if (shootPoint != null)
         {
             Gizmos.color = Color.red; // Establece el color del Gizmo a rojo
-            Vector3 direction = transform.right * 10f; // Ajusta la longitud de tu raycast seg�n sea necesario
+            Vector3 direction = transform.right * 10f; // Ajusta la longitud de tu raycast según sea necesario
             Gizmos.DrawRay(shootPoint.position, direction);
         }
     }
-
 
     IEnumerator Shoot()
     {
         canShoot = false;
 
-        //Obtener una bala del pool en lugar de instanciar una nueva
+        // Obtener una bala del pool en lugar de instanciar una nueva
         GameObject bullet = BulletPool.Instance.GetBullet();
 
-        //Configurar la posicion y la velocidad de la bala
+        // Configurar la posición y la velocidad de la bala
         bullet.transform.position = shootPoint.position;
 
-        //GameObject bullet = Instantiate(bulletPrefab, shootPoint.position, Quaternion.identity);
-        bullet.GetComponent<Rigidbody2D>().velocity = transform.right * 10f; // Ajusta la velocidad seg�n sea necesario
+        // GameObject bullet = Instantiate(bulletPrefab, shootPoint.position, Quaternion.identity);
+        bullet.GetComponent<Rigidbody2D>().velocity = transform.right * 10f; // Ajusta la velocidad según sea necesario
         yield return new WaitForSeconds(3);
         canShoot = true;
     }
@@ -126,17 +125,22 @@ public class RobotPistolero : MonoBehaviour, IDamageable
         }
     }
 
+    // Modificar la escala en lugar de rotarlo
+    void Flip()
+    {
+        transform.localScale = new Vector2(transform.localScale.x * -1, transform.localScale.y);
+        direction *= -1;
+    }
+
     public void HandleDeath()
     {
-        //Marco Anotnio 
-        //Reproducir animacion de muerte
-        //if(animator != null)
-        //{
-        //    animator.SetTrigger("Die");
-        //}
+        // Reproducir animación de muerte
+        // if (animator != null)
+        // {
+        //     animator.SetTrigger("Die");
+        // }
 
-
-        //Desactivar el sprite para que desaparezca visualmente
+        // Desactivar el sprite para que desaparezca visualmente
         if (spriteR != null)
         {
             spriteR.enabled = false;
@@ -144,20 +148,16 @@ public class RobotPistolero : MonoBehaviour, IDamageable
 
         playerG.GetComponent<Movement>().AddEXP(expValue);
 
-
-
         if (door != null)
             door.locked = false;
 
-        //Destruir el objeto despues de un peque�o retraso
-        //quite el retraso para hacer test al spawn lo devolvemos cuando tengamos animaciones de muertes.
+        // Destruir el objeto después de un pequeño retraso
         Destroy(gameObject);
         OnEnemyDeath?.Invoke();
     }
 
     private IEnumerator Vencible()
     {
-
         for (int i = 0; i < 3; i++)
         {
             spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
@@ -167,7 +167,6 @@ public class RobotPistolero : MonoBehaviour, IDamageable
         }
 
         invencible = false;
-
-        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
-    }
+        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
+    }
 }

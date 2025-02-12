@@ -117,7 +117,7 @@ public class Movement : MonoBehaviour, IDamageable, IExperience
         movementInput = context.ReadValue<Vector2>().normalized;
         if (movementInput != Vector2.zero)
         {
-            lastDirection = movementInput; // Guarda la última dirección no cero
+            lastDirection = movementInput; // Guarda la ï¿½ltima direcciï¿½n no cero
         }
     }
 
@@ -257,7 +257,7 @@ public class Movement : MonoBehaviour, IDamageable, IExperience
         {
             ParticleSystem particles = Instantiate(attackParticlePrefab, hitboxCenter.position, Quaternion.identity);
             particles.Play();
-            Destroy(particles.gameObject, particles.main.duration); // Destruir después de la duración del efecto
+            Destroy(particles.gameObject, particles.main.duration); // Destruir despuï¿½s de la duraciï¿½n del efecto
         }
         //
 
@@ -382,7 +382,7 @@ public class Movement : MonoBehaviour, IDamageable, IExperience
             me.position += (Vector3)(movementInput * speed * Time.deltaTime);
         }
 
-        // Actualizar rotación del personaje
+        // Actualizar rotaciï¿½n del personaje
         if (movementInput != Vector2.zero)
         {
             lastDirection = movementInput;
@@ -406,129 +406,141 @@ public class Movement : MonoBehaviour, IDamageable, IExperience
     }
 
     void UpdateAnimator()
-    {
-        // Determinar si el personaje se está moviendo
-        bool isMoving = movementInput != Vector2.zero;
+ {
+     // Determinar si el personaje se estÃ¡ moviendo
+     bool isMoving = movementInput != Vector2.zero;
 
-        // Actualizar parámetros del Animator
-        //animator.SetBool("IsMoving", isMoving);
-        animator.SetBool("Attack", attacking);
+     //A{adir estas tres lÃ­neas para sincrÃ³nizar Animator:
+     animator.SetBool("Attack", attacking);
+     animator.SetFloat("LastDirectionX", lastDirection.x);
+     animator.SetFloat("LastDirectionY", lastDirection.y);
 
-        //Si el personaje esta atacando, se reproduce la animacion de ataque
-        if (attacking)
-        {
+//Si el personaje esta atacando, se reproduce la animacion de ataque
+if (attacking)
+     {
 
-            if (movementInput.x > 0)
-            {
-                // Ataque hacia la derecha
-                animator.Play("Player_Attack");
-                spriteRenderer.flipX = true;
-            }
-            else if (movementInput.x < 0)
-            {
-                // Ataque hacia la izquierda
-                animator.Play("Player_Attack");
-                spriteRenderer.flipX = true;
-            }
-            else if (lastDirection.y > 0)
-            {
-                animator.Play("Player_Attack");
-                spriteRenderer.flipX = true;
-            }
-            else if (lastDirection.y < 0)
-            {
-                animator.Play("Player_Attack");
-                spriteRenderer.flipX = true;
+         if (movementInput.x > 0)
+         {
+             // Ataque hacia la derecha
+             animator.Play("Player_Attack");
+             spriteRenderer.flipX = true;
+         }
+         else if (movementInput.x < 0)
+         {
+             // Ataque hacia la izquierda
+             animator.Play("Player_Attack");
+             spriteRenderer.flipX = true;
+         }
+         else if (lastDirection.y > 0)
+         {
+             animator.Play("Player_Attack");
+             spriteRenderer.flipX = true;
+         }
+         else if (lastDirection.y < 0)
+         {
+             animator.Play("Player_Attack");
+             spriteRenderer.flipX = true;
+         }
+
+         //
+         if (lastDirection.x > 0)
+         {
+             // Ataque hacia la derecha
+             animator.Play("Player_Attack");
+             spriteRenderer.flipX = true;
+         }
+         else if (lastDirection.x < 0)
+         {
+             // Ataque hacia la izquierda
+             animator.Play("Player_Attack");
+             spriteRenderer.flipX = true;
+         }
+         else if (movementInput.y > 0)
+         {
+             // Ataque hacia arriba
+             animator.Play("Player_Attack");
+             spriteRenderer.flipX = true;
+         }
+         else if (movementInput.y < 0)
+         {
+             // Ataque hacia abajo
+             animator.Play("Player_Attack");
+             spriteRenderer.flipX = true;
+         }
+     }
+     else
+     {
+         // Si no estÃ¡ atacando, reproducir animaciÃ³n de caminar
+         animator.SetBool("IsMoving", isMoving);
+
+         if (isMoving)
+         {
+             if (Mathf.Abs(movementInput.x) > Mathf.Abs(movementInput.y))
+             {
+                 // Movimiento lateral (derecha o izquierda)
+                 if (movementInput.x > 0)
+                 {
+                     // Movimiento hacia la derecha
+                     animator.Play("Player_Side_Walk");
+                     spriteRenderer.flipX = true;
+                 }
+                 else if (movementInput.x < 0)
+                 {
+                     // Movimiento hacia la izquierda
+                     animator.Play("Player_Side_Walk");
+                     spriteRenderer.flipX = true;
+                 }
+             }
+             else if (movementInput.y > 0)
+             {
+                 // Movimiento hacia arriba
+                 animator.Play("Player_Back_Walk");
+                 spriteRenderer.flipX = false;
+             }
+             else if (movementInput.y < 0)
+             {
+                 // Movimiento hacia abajo
+                 animator.Play("Player_Front_Walk");
+                 spriteRenderer.flipX = false;
+             }
+         }
+         else
+         {
+             //Comentar esta secciÃ³n
+             //// Si no se mueve, reproducir animaciÃ³n de idle segÃºn la Ãºltima direcciÃ³n
+             //if (lastDirection.x > 0)
+             //{
+             //    animator.Play("Player_Idle");
+             //    spriteRenderer.flipX = false; // AsegÃºrate de que el sprite no estÃ© volteado
+             //}
+             //else if (lastDirection.x < 0)
+             //{
+             //    animator.Play("Player_Idle");
+             //    spriteRenderer.flipX = true; // Voltear el sprite hacia la izquierda
+             //}
+             //else if (lastDirection.y > 0)
+             //{
+             //    animator.Play("Player_Idle");
+             //}
+             //else if (lastDirection.y < 0)
+             //{
+             //    animator.Play("Player_Idle");
+             //}
+
+             // Si no se mueve, se puede poner una animaciÃ³n de descanso o idle si lo prefieres
+             //animator.Play("Player_Idle");
+             //spriteRenderer.flipX = false;
+
+             if (lastDirection.x < 0)
+             {
+                 spriteRenderer.flipX = true;
+             }
+             else
+             {
+                 spriteRenderer.flipX = false;
+             }
             }
 
-            //
-            if (lastDirection.x > 0)
-            {
-                // Ataque hacia la derecha
-                animator.Play("Player_Attack");
-                spriteRenderer.flipX = true;
-            }
-            else if (lastDirection.x < 0)
-            {
-                // Ataque hacia la izquierda
-                animator.Play("Player_Attack");
-                spriteRenderer.flipX = true;
-            }
-            else if (movementInput.y > 0)
-            {
-                // Ataque hacia arriba
-                animator.Play("Player_Attack");
-                spriteRenderer.flipX = true;
-            }
-            else if (movementInput.y < 0)
-            {
-                // Ataque hacia abajo
-                animator.Play("Player_Attack");
-                spriteRenderer.flipX = true;
-            }
-        }
-        else
-        {
-            // Si no está atacando, reproducir animación de caminar
-            animator.SetBool("IsMoving", isMoving);
-
-            if (isMoving)
-            {
-                if (Mathf.Abs(movementInput.x) > Mathf.Abs(movementInput.y))
-                {
-                    // Movimiento lateral (derecha o izquierda)
-                    if (movementInput.x > 0)
-                    {
-                        // Movimiento hacia la derecha
-                        animator.Play("Player_Side_Walk");
-                        spriteRenderer.flipX = true;
-                    }
-                    else if (movementInput.x < 0)
-                    {
-                        // Movimiento hacia la izquierda
-                        animator.Play("Player_Side_Walk");
-                        spriteRenderer.flipX = true;
-                    }
-                }
-                else if (movementInput.y > 0)
-                {
-                    // Movimiento hacia arriba
-                    animator.Play("Player_Back_Walk");
-                    spriteRenderer.flipX = false;
-                }
-                else if (movementInput.y < 0)
-                {
-                    // Movimiento hacia abajo
-                    animator.Play("Player_Front_Walk");
-                    spriteRenderer.flipX = false;
-                }
-            }
-            else
-            {
-                //// Si no se mueve, reproducir animación de idle según la última dirección
-                //if (lastDirection.x > 0)
-                //{
-                //    animator.Play("Player_Idle");
-                //    spriteRenderer.flipX = false; // Asegúrate de que el sprite no esté volteado
-                //}
-                //else if (lastDirection.x < 0)
-                //{
-                //    animator.Play("Player_Idle");
-                //    spriteRenderer.flipX = true; // Voltear el sprite hacia la izquierda
-                //}
-                //else if (lastDirection.y > 0)
-                //{
-                //    animator.Play("Player_Idle");
-                //}
-                //else if (lastDirection.y < 0)
-                //{
-                //    animator.Play("Player_Idle");
-                //}
-
-                // Si no se mueve, se puede poner una animación de descanso o idle si lo prefieres
-                animator.Play("Player_Idle");
-                spriteRenderer.flipX = false;
-            }
         }
     }
 }

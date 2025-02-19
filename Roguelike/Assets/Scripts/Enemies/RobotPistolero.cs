@@ -28,11 +28,20 @@ public class RobotPistolero : MonoBehaviour, IDamageable
 
     public Door door;
 
+    // Referencia al AudioSource
+    public AudioSource audioSource;
+
     private void Awake()
     {
         playerG = GameObject.FindGameObjectWithTag("Player");
         currentHP = maxHP;
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Obtener el componente AudioSource si no está asignado
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
     }
 
     private void Update()
@@ -97,6 +106,12 @@ public class RobotPistolero : MonoBehaviour, IDamageable
     IEnumerator Shoot()
     {
         canShoot = false;
+
+        // Reproducir el sonido de disparo
+        if (audioSource != null && audioSource.clip != null)
+        {
+            audioSource.Play();
+        }
 
         // Obtener una bala del pool en lugar de instanciar una nueva
         GameObject bullet = BulletPool.Instance.GetBullet();
@@ -167,6 +182,6 @@ public class RobotPistolero : MonoBehaviour, IDamageable
         }
 
         invencible = false;
-        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
-    }
+        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
+    }
 }

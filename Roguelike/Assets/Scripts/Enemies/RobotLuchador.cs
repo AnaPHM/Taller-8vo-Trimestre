@@ -31,6 +31,9 @@ public class RobotLuchador : MonoBehaviour, IDamageable
 
     public Door door;
 
+    // Referencia al AudioSource
+    public AudioSource audioSource;
+
     private void Awake()
     {
         currentHP = maxHP;
@@ -38,6 +41,9 @@ public class RobotLuchador : MonoBehaviour, IDamageable
         player = playerG.transform;
         attackHitbox.SetActive(false);
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Obtener el componente AudioSource
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -46,7 +52,7 @@ public class RobotLuchador : MonoBehaviour, IDamageable
         {
             float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-            
+
             if (distanceToPlayer < detectionRange && distanceToPlayer > attackDistance && canAttack)
             {
                 Vector2 direction = (player.position - transform.position).normalized;
@@ -56,7 +62,7 @@ public class RobotLuchador : MonoBehaviour, IDamageable
             }
             else if (distanceToPlayer <= attackDistance && canAttack)
                 StartCoroutine(ActivateHitbox());
-            
+
         }
     }
 
@@ -89,14 +95,14 @@ public class RobotLuchador : MonoBehaviour, IDamageable
             Destroy(particles.gameObject, particles.main.duration + 0.1f);
         }
 
-        attackHitbox.SetActive(true); 
+        attackHitbox.SetActive(true);
         yield return new WaitForSeconds(1.0f);
 
-        attackHitbox.SetActive(false); 
-        yield return new WaitForSeconds(1.0f); 
+        attackHitbox.SetActive(false);
+        yield return new WaitForSeconds(1.0f);
 
         isAttacking = false;
-        canAttack = true; 
+        canAttack = true;
     }
 
     public void ChangeHP(float amount)
@@ -106,6 +112,12 @@ public class RobotLuchador : MonoBehaviour, IDamageable
             invencible = true;
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+
+            // Reproducir el sonido de daño
+            if (audioSource != null && amount < 0) // Solo reproducir si el daño es negativo (es decir, el enemigo está siendo dañado)
+            {
+                audioSource.Play();
+            }
 
             if (currentHP <= 0)
                 HandleDeath();
@@ -134,7 +146,7 @@ public class RobotLuchador : MonoBehaviour, IDamageable
 
         if (door != null)
             door.locked = false;
-          
+
         // Destruir el objeto después de un pequeño retraso 
         //quite el retraso para hacer test al spawn lo devolvemos cuando tengamos animaciones de muertes.
         Destroy(gameObject);
@@ -210,5 +222,4 @@ public class RobotLuchador : MonoBehaviour, IDamageable
             spriteRenderer.flipX = true;
         }
     }
-
 }

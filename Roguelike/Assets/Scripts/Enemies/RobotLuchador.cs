@@ -20,14 +20,16 @@ public class RobotLuchador : MonoBehaviour, IDamageable
     private SpriteRenderer spriteRenderer;
 
     public static event System.Action OnEnemyDeath;
+    
+    public AudioClip attackRL;
 
     // Referencias para la animacion y el sprite
     public Animator animator;
     public SpriteRenderer spriteR;
     public GameObject attackHitbox;
 
-    [SerializeField] private ParticleSystem attackParticlePrefab; // Prefab de partículas de ataque
-    [SerializeField] private Transform attackOrigin; // Posición de origen del ataque
+    [SerializeField] private ParticleSystem attackParticlePrefab; // Prefab de partï¿½culas de ataque
+    [SerializeField] private Transform attackOrigin; // Posiciï¿½n de origen del ataque
 
     public Door door;
 
@@ -57,7 +59,7 @@ public class RobotLuchador : MonoBehaviour, IDamageable
             {
                 Vector2 direction = (player.position - transform.position).normalized;
                 transform.position += (Vector3)direction * speed * Time.deltaTime;
-                // Determinar la dirección del movimiento para las animaciones
+                // Determinar la direcciï¿½n del movimiento para las animaciones
                 UpdateAnimationDirection(direction);
             }
             else if (distanceToPlayer <= attackDistance && canAttack)
@@ -71,7 +73,9 @@ public class RobotLuchador : MonoBehaviour, IDamageable
         canAttack = false;
         isAttacking = true;
 
-        // Establece el Trigger para iniciar la animación de ataque
+        audioSource.PlayOneShot(attackRL);
+
+        // Establece el Trigger para iniciar la animaciï¿½n de ataque
         if (animator != null)
         {
             animator.SetTrigger("Attacking");
@@ -79,13 +83,13 @@ public class RobotLuchador : MonoBehaviour, IDamageable
 
         yield return new WaitForSeconds(0.5f);
 
-        // Instanciar partículas en el origen del ataque
+        // Instanciar partï¿½culas en el origen del ataque
         if (attackParticlePrefab != null && attackOrigin != null)
         {
             ParticleSystem particles = Instantiate(attackParticlePrefab, attackOrigin.position, Quaternion.identity);
             Vector3 attackDirection = (player.position - attackOrigin.position).normalized;
 
-            // Ajustar rotación de partículas hacia el jugador
+            // Ajustar rotaciï¿½n de partï¿½culas hacia el jugador
             if (attackDirection != Vector3.zero)
             {
                 particles.transform.rotation = Quaternion.LookRotation(Vector3.forward, attackDirection);
@@ -113,8 +117,8 @@ public class RobotLuchador : MonoBehaviour, IDamageable
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
 
-            // Reproducir el sonido de daño
-            if (audioSource != null && amount < 0) // Solo reproducir si el daño es negativo (es decir, el enemigo está siendo dañado)
+            // Reproducir el sonido de daï¿½o
+            if (audioSource != null && amount < 0) // Solo reproducir si el daï¿½o es negativo (es decir, el enemigo estï¿½ siendo daï¿½ado)
             {
                 audioSource.Play();
             }
@@ -147,7 +151,7 @@ public class RobotLuchador : MonoBehaviour, IDamageable
         if (door != null)
             door.locked = false;
 
-        // Destruir el objeto después de un pequeño retraso 
+        // Destruir el objeto despuï¿½s de un pequeï¿½o retraso 
         //quite el retraso para hacer test al spawn lo devolvemos cuando tengamos animaciones de muertes.
         Destroy(gameObject);
         OnEnemyDeath?.Invoke();
@@ -171,22 +175,22 @@ public class RobotLuchador : MonoBehaviour, IDamageable
 
     void UpdateAnimationDirection(Vector2 direction)
     {
-        // Si el enemigo está atacando, reproduce únicamente la animación de ataque
+        // Si el enemigo estï¿½ atacando, reproduce ï¿½nicamente la animaciï¿½n de ataque
         if (isAttacking)
         {
             animator.Play("Enemy_Attack");
             return;
         }
 
-        // Determinar si el enemigo se está moviendo
+        // Determinar si el enemigo se estï¿½ moviendo
         bool isMoving = direction != Vector2.zero;
 
-        // Actualizar parámetros del Animator
+        // Actualizar parï¿½metros del Animator
         animator.SetBool("EnemyMove", isMoving);
 
         if (isMoving)
         {
-            // Comprobar dirección de movimiento y reproducir la animación correspondiente
+            // Comprobar direcciï¿½n de movimiento y reproducir la animaciï¿½n correspondiente
             if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
             {
                 // Movimiento lateral (izquierda o derecha)

@@ -108,7 +108,8 @@ MonoBehaviour:
   shootPoint: {fileID: 2361847995141194395}
   spriteR: {fileID: 2207423264532102510}
   door: {fileID: 0}
-  audioSource: {fileID: 0}
+  audioSource: {fileID: 552584696113039635}
+  TankBroken: {fileID: 8300000, guid: b25336ce882b348489be32cd894869a0, type: 3}
 --- !u!61 &1017501253467474374
 BoxCollider2D:
   m_ObjectHideFlags: 0

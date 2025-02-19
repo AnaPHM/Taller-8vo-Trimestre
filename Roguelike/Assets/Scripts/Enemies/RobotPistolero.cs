@@ -31,6 +31,8 @@ public class RobotPistolero : MonoBehaviour, IDamageable
     // Referencia al AudioSource
     public AudioSource audioSource;
 
+    public AudioClip TankBroken;
+
     private void Awake()
     {
         playerG = GameObject.FindGameObjectWithTag("Player");
@@ -133,6 +135,12 @@ public class RobotPistolero : MonoBehaviour, IDamageable
             currentHP += amount;
             currentHP = Mathf.Clamp(currentHP, 0, maxHP);
 
+            // Reproducir el sonido de da�o
+            if (audioSource != null && amount < 0) // Solo reproducir si el da�o es negativo (es decir, el enemigo est� siendo da�ado)
+            {
+                audioSource.Play();
+            }
+
             if (currentHP <= 0)
                 HandleDeath();
 
@@ -163,12 +171,15 @@ public class RobotPistolero : MonoBehaviour, IDamageable
 
         playerG.GetComponent<Movement>().AddEXP(expValue);
 
+
         if (door != null)
             door.locked = false;
 
         // Destruir el objeto después de un pequeño retraso
         Destroy(gameObject);
         OnEnemyDeath?.Invoke();
+
+        audioSource.PlayOneShot(TankBroken);
     }
 
     private IEnumerator Vencible()

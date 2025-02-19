@@ -188,6 +188,7 @@ MonoBehaviour:
   speed: 4
   detectionRange: 10
   attackDistance: 2.5
+  attackRL: {fileID: 8300000, guid: f9ac131d9dfc6354cac32cbe0c44ccb9, type: 3}
   animator: {fileID: 6068234824563648135}
   spriteR: {fileID: 5129843238336108613}
   attackHitbox: {fileID: 1810386709956898183}

@@ -77,6 +77,8 @@ public class Movement : MonoBehaviour, IDamageable, IExperience
     public AudioClip attack;
     public AudioClip zoom;
     public AudioClip shoot;
+    public AudioClip damage;
+    public AudioClip deathnoir;
 
     void Start()
     {
@@ -212,6 +214,8 @@ public class Movement : MonoBehaviour, IDamageable, IExperience
             hp += amount;
             hp = Mathf.Clamp(hp, 0, maxHp);
 
+            audioSource.PlayOneShot(damage);
+
             if (hp <= 0)
             {
                 HandleDeath();
@@ -227,6 +231,7 @@ public class Movement : MonoBehaviour, IDamageable, IExperience
 
         //Reproduce la animacion de muerte
         //animator.SetTrigger("Die");
+        audioSource.PlayOneShot(deathnoir);
 
 
         spriteRenderer.enabled = false;
